@@ -1,0 +1,51 @@
+---
+title: "robustGeocode Functions"
+author: "Cody Schulz"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+# robustGeocode
+
+`robustGeocode` allows users to conveniently overcome Google Maps geocoding API problems.
+
+## Installation
+
+earthquakeMap can be installed using `devtools`:
+```{r devtools, eval = FALSE}
+library(devtools)
+install_github("codyschulz/robustGeocode")
+library(robustGeocode)
+```
+
+## `geocode_robust()`
+
+`robustGeocode` contains a single function, `geocode_robust()`, which geocodes locations until all are geocoded. Normal geocoding with the `ggmaps` `geocode()` function currently has an extremely high failure rate, as we can see below.
+
+```{r geocode_failure, warning = FALSE, message = FALSE}
+library(ggmap)
+data <- data.frame(addr = c("The White House", "11 Wall St, New York, NY", "525 A St. NE, Washington, DC", "42 Wallaby Way, Sydney"), 
+                   stringsAsFactors = FALSE)
+geocode(data$addr)
+```
+
+`geocode_robust()` geocodes the (unique) locations provided, then geocodes again the locations that failed to geocode. It repeats this 10 times or until all observations have latlons (whichever comes first).
+```{r geocode_robust, message = FALSE}
+library(robustGeocode)
+geocode_robust(data, "addr")
+```
+
+Users can also specify the number of times to repeat the geocoding process
+```{r choose_n, message = FALSE}
+geocode_robust(data, "addr", 3)
+```
+
+For locations with duplicate locations, `geocode_robust()` merges the unique locations and latlons back onto the original dataset so no observations are lost. It even maintains the original observation order
+```{r dup_addresses}
+data_add <- rbind(data, data[1,])
+data_add
+geocode_robust(data_add, "addr")
+```
