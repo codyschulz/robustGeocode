@@ -1,5 +1,3 @@
-output: rmarkdown::github_document
-
 # robustGeocode
 
 `robustGeocode` allows users to conveniently overcome Google Maps geocoding API problems.
