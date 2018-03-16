@@ -4,7 +4,8 @@
 \alias{geocode_robust}
 \title{Robust geocoding function}
 \usage{
-geocode_robust(data, location = "address", n = 10)
+geocode_robust(data, location = "address", n = 10,
+  return_full_dataframe = FALSE)
 }
 \arguments{
 \item{data}{the data.frame containing the location column to be geocoded.
@@ -15,10 +16,13 @@ vector of length 1)}
 
 \item{n}{the number of times the location column should be geocoded
 The default is 10. (numeric vector of length 1)}
+
+\item{return_full_dataframe}{if TRUE, returns the original dataframe plus
+the lat and lon columns. If FALSE, returns the lat and lon columns.}
 }
 \value{
 a data.frame identical to that of the input data frame except with
-lat and lon columns for the location column
+lat and lon columns for the location column or just the lat and lon columns.
 }
 \description{
 geocode_robust geocodes locations via the Google Maps API. It then

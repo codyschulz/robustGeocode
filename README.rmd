@@ -5,8 +5,7 @@
 `robustGeocode` allows users to conveniently overcome Google Maps geocoding API problems.
 
 ## Installation
-
-earthquakeMap can be installed using `devtools`:
+`robustGeocode` can be installed using `devtools`:
 ```{r devtools, eval = FALSE}
 library(devtools)
 install_github("codyschulz/robustGeocode")
@@ -35,9 +34,14 @@ Users can also specify the number of times to repeat the geocoding process
 geocode_robust(data, "addr", 3)
 ```
 
-For locations with duplicate locations, `geocode_robust()` merges the unique locations and latlons back onto the original dataset so no observations are lost. It even maintains the original observation order
+`geocode_robust()` merges the unique locations and latlons back onto the original dataset so no observations are lost. It also maintains the original observation order
 ```{r dup_addresses}
 data_add <- rbind(data, data[1,])
 data_add
 geocode_robust(data_add, "addr")
+```
+
+Users can also specify whether they want their original dataset with the lat and lon columns returned (`return_full_dataframe` = TRUE) or just want the lat and lon columns (`return_full_dataframe` = FALSE - the default).
+```{r return_full_dataframe`}
+geocode_robust(data, "addr", return_full_dataframe = TRUE)
 ```

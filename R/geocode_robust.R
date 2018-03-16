@@ -12,9 +12,11 @@
 #' vector of length 1)
 #' @param n the number of times the location column should be geocoded
 #' The default is 10. (numeric vector of length 1)
+#' @param return_full_dataframe if TRUE, returns the original dataframe plus
+#' the lat and lon columns. If FALSE, returns the lat and lon columns.
 #'
 #' @return a data.frame identical to that of the input data frame except with
-#' lat and lon columns for the location column
+#' lat and lon columns for the location column or just the lat and lon columns.
 #'
 #' @examples
 #' \dontrun{
@@ -32,7 +34,7 @@
 #' non-null integer vector of length 1
 #'
 #' @export
-geocode_robust <- function(data, location = "address", n = 10) {
+geocode_robust <- function(data, location = "address", n = 10, return_full_dataframe = FALSE) {
 
   ##### Ensure inputs are compatible
 
@@ -60,9 +62,12 @@ geocode_robust <- function(data, location = "address", n = 10) {
     message("Duplicates found in location column. Geocoding unique
             locations, but returning all observations")
     data0 <- data
-    data0$order <- row.names(data0)
+    data0$order <- as.numeric(row.names(data0))
     data <- data0[which(!duplicated(data0[[location]])),]
 
+  } else {
+    data0 <- data
+    data0$order <- as.numeric(row.names(data0))
   }
 
   ##### Geocode
@@ -123,14 +128,15 @@ geocode_robust <- function(data, location = "address", n = 10) {
 
   ### If data had duplicate locations, merge 1:m back onto original dataset so
   ### that no observations are missing, also retaining original order
-  if(exists("data0")) {
     data <- data[,c(location, "lat", "lon")]
     data <- merge(data0, data, by = location, all = TRUE, sort = FALSE)
     data <- data[order(data$order),]
     data <- data[,-which(names(data) == "order")]
-  }
 
   ### Return new dataset
-  data[,c("lon", "lat")]
-
+  if(return_full_dataframe == FALSE) {
+    data[,c("lon", "lat")]
+  } else {
+    data
+  }
 }
